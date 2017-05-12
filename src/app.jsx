@@ -9,7 +9,7 @@ const {
 
 
 ReactDOM.render(
-    <p className="button hollow">Boilerplate 3</p>,
+    <p>Boilerplate!</p>,
     document.getElementById('app')
 );
 

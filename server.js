@@ -1,18 +1,28 @@
 const express = require('express');
 
-var app = express();
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(function(req, res, next) {
-    if(req.headers['x-forwarded-proto'] === 'https')
-    {
-        res.redirect('http://' + req.hostname + req.url);
-    }else{
+app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] === 'https') {
+        res.redirect(`http://${req.hostname}${req.url}`);
+    } else {
         next();
     }
 });
 
-app.use(express.static('public'));
+if (process.env.NODE_ENV !== 'production') {
+    const webpackMiddleware = require('webpack-dev-middleware');
+    const webpack = require('webpack');
+    const webpackConfig = require('./webpack.config');
+
+    app.use(webpackMiddleware(webpack(webpackConfig)));
+} else {
+    app.use(express.static('dist'));
+}
+
+
+app.use(express.static('dist'));
 
 app.listen(PORT, () => {
     console.log(`Server is up on port ${PORT}`);
