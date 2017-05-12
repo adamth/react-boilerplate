@@ -1,0 +1,11 @@
+{
+    "extends":["rallycoding","plugin:react/recommended"],
+    "plugins":[
+        "react"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    }
+}

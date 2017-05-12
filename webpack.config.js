@@ -1,47 +1,61 @@
-var webpack = require('webpack');
-var path    = require('path');
+const webpack = require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 module.exports = {
     entry: [     
-        'script!jquery/dist/jquery.min.js',
-        'script!foundation-sites/dist/js/foundation.min.js',
-        './app/app.jsx'
+        'script-loader!jquery/dist/jquery.min.js',
+        'script-loader!foundation-sites/dist/js/foundation.min.js',
+        './src/app.jsx'
         ],
-    externals:{
+    externals: {
         jquery: 'jQuery'
         },
     plugins: [
         new webpack.ProvidePlugin({
-            '$': 'jquery',
-            'jQuery': 'jquery'
-        })
+            $: 'jquery',
+            jQuery: 'jquery'
+        }),
+        new HtmlWebpackPlugin({ template: 'src/index.html' }),
+        new ExtractTextPlugin('styles.css')
         ],
     output: {
-        path: __dirname,
-        filename: './public/bundle.js'
+        path: path.join(__dirname, 'dist'),
+        filename: 'bundle.js'
     },
     resolve: {
-        root: __dirname,
         alias: {
             applicationStyles: 'app/styles/app.scss'
         },
-        extensions: ['','.js', '.jsx']
+        extensions: ['.js', '.jsx']
     },
     module: {
-        loaders: [
+        rules: [
             {
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'es2015']
-                },
-                test: /\.jsx?$/,
-                exclude: /(node_modules|bower_components)/
+                test: /\.jsx$/,
+                exclude: [/node_modules/],
+                use: [{
+                    loader: 'babel-loader',
+                    options: { presets: ['es2015', 'react', 'stage-0'] }
+                }]
+            },
+            {
+                test: /\.scss$/,
+                exclude: [/node_modules/],
+                use: [{ 
+                    loader: 'style-loader' 
+                }, { 
+                    loader: 'css-loader' 
+                }, { 
+                    loader: 'sass-loader',
+                    options: {
+                        includePaths: [
+                            path.resolve(__dirname, './node_modules/foundation-sites/scss')
+                        ]
+                    }
+                }]
             }
         ]
-    },
-    sassLoader: {
-        includePaths: [
-            path.resolve(__dirname,'./node_modules/foundation-sites/scss')
-        ]
-    },
-    devtool: 'cheap-module-eval-source-map'
+    }
 };
