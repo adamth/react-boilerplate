@@ -11,17 +11,6 @@ app.use((req, res, next) => {
     }
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    const webpackMiddleware = require('webpack-dev-middleware');
-    const webpack = require('webpack');
-    const webpackConfig = require('./webpack.config');
-
-    app.use(webpackMiddleware(webpack(webpackConfig)));
-} else {
-    app.use(express.static('dist'));
-}
-
-
 app.use(express.static('dist'));
 
 app.listen(PORT, () => {
